@@ -5,3 +5,7 @@ PVR.addRegions({
     content: '#content',
     footer: '#footer'
 });
+
+PVR.on('initialize:after', function () {
+    Backbone.history.start();
+});

@@ -24,24 +24,27 @@ body {
 #leftpane {
     position: absolute;
     width:500px;
-    height:600px;
-    /* scroll bar usually takes up inner content space of the owner, if
-    not need horizontal scrollbar, hide it*/
-    overflow-y: scroll;
-    overflow-x: hidden;
     background-color: rgb(234, 226, 133);
 }
 
+#list1 {
+    height:600px;
+    /* scroll bar usually takes up inner content space of the owner, if*/
+    /*not need horizontal scrollbar, hide it*/
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
 /* Let's get this party started */
-#leftpane::-webkit-scrollbar {
+#list1::-webkit-scrollbar {
     width: 4px;
 }
-#leftpane::-webkit-scrollbar-track {
+#list1::-webkit-scrollbar-track {
     border-radius: 4px;
     background-color: rgba(156, 156, 156, 0.5);
 }
 
-#leftpane::-webkit-scrollbar-thumb {
+#list1::-webkit-scrollbar-thumb {
     border-radius: 4px;
     /*-webkit-box-shadow: inset 0 0 3px rgb(95, 95, 95);*/
     background-color: rgba(0, 0, 0, 0.3);

@@ -31,9 +31,11 @@ PVR.module("PVRView", function(PVRView, App, Backbone, Marionette, $, _){
         itemView: PVRView.SingleItemView,
         _collection: new Backbone.Collection(),
         currentSelectedRow: null,
+        noteBox: "#notebox",
 
         events: {
-            'click .clickable_row': 'viewClicked'
+            'click .clickable_row': 'viewClicked',
+            'scroll': 'viewScrolled'
         },
 
         viewClicked: function(event) {
@@ -54,6 +56,25 @@ PVR.module("PVRView", function(PVRView, App, Backbone, Marionette, $, _){
             this.currentSelectedRow = currentElement;
         },
 
+        viewScrolled: function(event) {
+            if($(event.currentTarget).scrollTop() + $(event.currentTarget).outerHeight() == $(event.currentTarget)[0].scrollHeight) {
+                $(this.noteBox).fadeIn(1000);
+
+                var setTimeoutCallBack = (function(t){
+                    return function() {
+                        //fetch data
+                        t.loadPage(function(view){
+                            t.show(view);
+
+                            // hide notification box
+                            $(t.noteBox).fadeOut(1000);
+                        });
+                    }
+                })(this);
+                setTimeout(setTimeoutCallBack, 1000);
+            }
+        },
+
         index: 0,
         buildItemView: function(item, ItemViewType, itemViewOptions){
             // build the final list of options for the item view type
@@ -70,18 +91,22 @@ PVR.module("PVRView", function(PVRView, App, Backbone, Marionette, $, _){
         // each page is 15 records
         page: 1,
         loadPage: function(callback) {
-            var context = this;
-            var recordings = new App.PVRModel.RecordingCollection();
-            recordings.fetchRecordings(function(collection){
-                context._collection.add(collection.models);
-                var view = new App.PVRView.ListView({
-                    collection: context._collection
-                });
+            var fetchRecordingsCallBack = (function (t) {
+                return function (collection) {
+                    t._collection.add(collection.models);
+                    var view = new App.PVRView.ListView({
+                        collection: t._collection
+                    });
 
-                context.page++; // increment page
-                // call back with result view
-                callback(view);
-            }, this.page);
+                    $(t.noteBox).fadeOut(1000);
+                    t.page++; // increment page
+                    // call back with result view
+                    callback(view);
+                }
+            })(this);
+
+            var recordings = new App.PVRModel.RecordingCollection();
+            recordings.fetchRecordings(fetchRecordingsCallBack, this.page);
         }
     });
 });

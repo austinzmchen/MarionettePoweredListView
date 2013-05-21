@@ -8,8 +8,7 @@ PVR.module("PVRLayout", function(PVRLayout, App, Backbone, Marionette, $, _){
         currentSelectedRow: null,
 
         regions: {
-            listbox: "#listbox",
-            note_box: "#notebox"
+            listbox: "#listbox"
         },
 
         events: {
@@ -17,40 +16,19 @@ PVR.module("PVRLayout", function(PVRLayout, App, Backbone, Marionette, $, _){
         },
 
         rowClicked: function(event) {
+            console.log("rowClicked");
             $("#rightpane-div1").html($(event.currentTarget).children("#rec_title")[0].innerHTML);
             $("#rightpane-div2").html($(event.currentTarget).children("#rec_date")[0].innerHTML);
             $("#rightpane-div3").html($(event.currentTarget).children("#rec_type")[0].innerHTML);
         },
 
         onRender: function () {
-            var context = this;
-            this.listView.loadPage(function(view){
-                context.listbox.show(view);
-
-                context.postRender();
-            });
-        },
-
-        postRender: function () {
-            var context = this;
-            $('#notebox').fadeOut(1000);
-
-            // register scrolling event
-            $('#leftpane').scroll(function () {
-                if($(this).scrollTop() + $(this).outerHeight() == $(this)[0].scrollHeight ) {
-                    $('#notebox').fadeIn(1000);
-
-                    setTimeout(function(){
-                        //fetch data
-                        context.listView.loadPage(function(view){
-                            context.listbox.show(view);
-
-                            // hide notification box
-                            $('#notebox').fadeOut(1000);
-                        });
-                    }, 1500);
+            var loadPageCallBack = (function(t) {
+                return function(view) {
+                    t.listbox.show(view);
                 }
-            });
+            })(this);
+            this.listView.loadPage(loadPageCallBack);
         }
     });
 });
